@@ -1,3 +1,4 @@
+import org.amqptest.AmqpServer;
 import org.junit.Test;
 
 import java.net.Socket;
