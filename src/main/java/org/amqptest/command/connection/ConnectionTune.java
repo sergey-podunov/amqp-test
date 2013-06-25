@@ -1,12 +1,11 @@
 package org.amqptest.command.connection;
 
 import org.amqptest.AmqpServer;
-import org.amqptest.ConnectionHandler;
-import org.amqptest.command.AmqpCommand;
+import org.amqptest.command.AmqpResponseCommand;
 
 import java.nio.ByteBuffer;
 
-public class ConnectionTune implements AmqpCommand {
+public class ConnectionTune implements AmqpResponseCommand {
     private final short chanelMax;
     private final int frameMax;
     private final short heartBeat;
@@ -28,21 +27,11 @@ public class ConnectionTune implements AmqpCommand {
     }
 
     @Override
-    public AmqpCommand execute(ConnectionHandler connectionHandler) {
-        throw new RuntimeException(this.getClass().getSimpleName() + " can't be consumed by server");
-    }
-
-    @Override
     public byte[] bytes() {
         ByteBuffer payloadBuffer = ByteBuffer.allocate(8).order(AmqpServer.BYTE_ORDER);
         payloadBuffer.putShort(chanelMax);
         payloadBuffer.putInt(frameMax);
         payloadBuffer.putShort(heartBeat);
         return payloadBuffer.array();
-    }
-
-    @Override
-    public void fillArguments(byte[] commandPayload) {
-        throw new RuntimeException(this.getClass().getSimpleName() + " can't be consumed by server");
     }
 }

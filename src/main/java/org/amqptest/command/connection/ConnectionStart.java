@@ -1,13 +1,12 @@
 package org.amqptest.command.connection;
 
-import org.amqptest.ConnectionHandler;
-import org.amqptest.command.AmqpCommand;
+import org.amqptest.command.AmqpResponseCommand;
 import org.amqptest.types.LongString;
 
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 
-public class ConnectionStart implements AmqpCommand {
+public class ConnectionStart implements AmqpResponseCommand {
 
     private final int major;
     private final int minor;
@@ -34,11 +33,6 @@ public class ConnectionStart implements AmqpCommand {
     }
 
     @Override
-    public AmqpCommand execute(ConnectionHandler connectionHandler) {
-        throw new RuntimeException(this.getClass().getSimpleName() + " can't be consumed by server");
-    }
-
-    @Override
     public byte[] bytes() {
         byte[] serverPropertiesBytes = new LongString("").bytes();
         byte[] securityMechBytes = new LongString(securityMechanisms).bytes();
@@ -50,10 +44,5 @@ public class ConnectionStart implements AmqpCommand {
         commandBuffer.put(securityMechBytes);
         commandBuffer.put(localesBytes);
         return commandBuffer.array();
-    }
-
-    @Override
-    public void fillArguments(byte[] commandPayload) {
-        throw new RuntimeException(this.getClass().getSimpleName() + " can't be consumed by server");
     }
 }

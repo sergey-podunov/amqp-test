@@ -4,7 +4,7 @@ import org.apache.commons.codec.binary.Hex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class BaseCommandFactory<C extends AmqpCommand> implements CommandFactory<C> {
+public abstract class BaseCommandFactory<C extends AmqpRequestCommand> implements CommandFactory<C> {
     private static final Logger logger = LoggerFactory.getLogger(BaseCommandFactory.class);
 
     @Override

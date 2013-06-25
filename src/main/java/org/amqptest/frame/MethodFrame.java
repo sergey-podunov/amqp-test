@@ -1,7 +1,7 @@
 package org.amqptest.frame;
 
 import org.amqptest.AmqpServer;
-import org.amqptest.command.CommandSelector;
+import org.amqptest.command.CommandMethodId;
 
 import java.nio.ByteBuffer;
 
@@ -29,15 +29,15 @@ public class MethodFrame extends Frame<MethodFrame.RawCommand> {
 
     public static class RawCommand {
 
-        private CommandSelector.CommandMethodId commandMethodId;
+        private CommandMethodId commandMethodId;
         private byte[] commandPayload;
 
         public RawCommand(short commandId, short methodId, byte[] commandPayload) {
             this.commandPayload = commandPayload;
-            commandMethodId = new CommandSelector.CommandMethodId(commandId, methodId);
+            commandMethodId = new CommandMethodId(commandId, methodId);
         }
 
-        public CommandSelector.CommandMethodId getCommandMethodId() {
+        public CommandMethodId getCommandMethodId() {
             return commandMethodId;
         }
 

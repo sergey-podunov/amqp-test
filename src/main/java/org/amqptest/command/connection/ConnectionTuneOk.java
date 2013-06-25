@@ -1,27 +1,18 @@
 package org.amqptest.command.connection;
 
 import org.amqptest.ConnectionHandler;
-import org.amqptest.command.AmqpCommand;
+import org.amqptest.command.AmqpRequestCommand;
+import org.amqptest.command.AmqpResponseCommand;
 import org.amqptest.exception.ProtocolException;
 import org.amqptest.types.ValueReader;
 
-public class ConnectionTuneOk implements AmqpCommand {
+public class ConnectionTuneOk implements AmqpRequestCommand {
     private short clientChannelMaxCount;
     private int clientFrameSize;
     private short clientHeartbeatTimeout;
 
     @Override
-    public short getCommandId() {
-        return 10;
-    }
-
-    @Override
-    public short getMethodId() {
-        return 31;
-    }
-
-    @Override
-    public AmqpCommand execute(ConnectionHandler connectionHandler) throws ProtocolException {
+    public AmqpResponseCommand execute(ConnectionHandler connectionHandler) throws ProtocolException {
         Short serverChanelMaxCount = (Short) connectionHandler.getServerSettings().get("chanelMaxCount");
         if (clientChannelMaxCount > serverChanelMaxCount) {
             throw new ProtocolException(String.format("Client ask too much channels : %d, server allow only %d", clientChannelMaxCount, serverChanelMaxCount));
@@ -36,11 +27,6 @@ public class ConnectionTuneOk implements AmqpCommand {
         connectionHandler.setHeartbeatTimeout(clientHeartbeatTimeout);
 
         return null;
-    }
-
-    @Override
-    public byte[] bytes() {
-        throw new RuntimeException(this.getClass().getSimpleName() + " can't be consumed by client");
     }
 
     @Override

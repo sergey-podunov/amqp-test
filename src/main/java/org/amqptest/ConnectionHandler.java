@@ -1,7 +1,8 @@
 package org.amqptest;
 
 import com.google.common.base.Preconditions;
-import org.amqptest.command.AmqpCommand;
+import org.amqptest.command.AmqpRequestCommand;
+import org.amqptest.command.AmqpResponseCommand;
 import org.amqptest.command.CommandSelector;
 import org.amqptest.command.connection.ConnectionStart;
 import org.amqptest.exception.ProtocolException;
@@ -117,10 +118,10 @@ public class ConnectionHandler implements Runnable {
                 MethodFrame frame = (MethodFrame) Frame.readFrame(in);
 
                 MethodFrame.RawCommand rawCommand = frame.getPayload();
-                AmqpCommand requestCommand = commandSelector.getCommand(rawCommand.getCommandMethodId(), rawCommand.getCommandPayload());
+                AmqpRequestCommand requestCommand = commandSelector.getCommand(rawCommand.getCommandMethodId(), rawCommand.getCommandPayload());
                 logger.debug("Parsed request command {}", requestCommand);
 
-                AmqpCommand responseCommand = requestCommand.execute(this);
+                AmqpResponseCommand responseCommand = requestCommand.execute(this);
                 if (responseCommand == null) {
                     logger.info("No response for {}", requestCommand);
                     continue;
@@ -171,14 +172,14 @@ public class ConnectionHandler implements Runnable {
         logger.debug("{} was sent", connectionStart);
     }
 
-    private byte[] createMethodFramePayload(AmqpCommand command) {
+    private byte[] createMethodFramePayload(AmqpResponseCommand responseCommand) {
         //todo move to the MethodFrame class
         byte[] commandBytes;
         ByteBuffer methodPayload;
-        commandBytes = command.bytes();
+        commandBytes = responseCommand.bytes();
         methodPayload = ByteBuffer.allocate(4 + commandBytes.length);
-        methodPayload.put(ByteBuffer.allocate(2).order(AmqpServer.BYTE_ORDER).putShort(command.getCommandId()).array());
-        methodPayload.put(ByteBuffer.allocate(2).order(AmqpServer.BYTE_ORDER).putShort(command.getMethodId()).array());
+        methodPayload.put(ByteBuffer.allocate(2).order(AmqpServer.BYTE_ORDER).putShort(responseCommand.getCommandId()).array());
+        methodPayload.put(ByteBuffer.allocate(2).order(AmqpServer.BYTE_ORDER).putShort(responseCommand.getMethodId()).array());
         if (commandBytes.length != 0) {
             methodPayload.put(commandBytes);
         }

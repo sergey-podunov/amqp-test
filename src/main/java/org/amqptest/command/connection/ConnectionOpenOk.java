@@ -1,11 +1,9 @@
 package org.amqptest.command.connection;
 
-import org.amqptest.ConnectionHandler;
-import org.amqptest.command.AmqpCommand;
-import org.amqptest.exception.ProtocolException;
+import org.amqptest.command.AmqpResponseCommand;
 import org.amqptest.types.ShortString;
 
-public class ConnectionOpenOk implements AmqpCommand {
+public class ConnectionOpenOk implements AmqpResponseCommand {
     private final String knownHosts;
 
     public ConnectionOpenOk(String knownHosts) {
@@ -23,17 +21,7 @@ public class ConnectionOpenOk implements AmqpCommand {
     }
 
     @Override
-    public AmqpCommand execute(ConnectionHandler connectionHandler) throws ProtocolException {
-        throw new RuntimeException(this.getClass().getSimpleName() + " can't be consumed by server");
-    }
-
-    @Override
     public byte[] bytes() {
         return new ShortString(knownHosts).bytes();
-    }
-
-    @Override
-    public void fillArguments(byte[] commandPayload) {
-        throw new RuntimeException(this.getClass().getSimpleName() + " can't be consumed by server");
     }
 }

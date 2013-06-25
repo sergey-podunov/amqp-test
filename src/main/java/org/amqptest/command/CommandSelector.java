@@ -18,7 +18,7 @@ public class CommandSelector {
             .put(new CommandMethodId(10, 50), new ConnectionCloseFactory())
             .build();
 
-    public AmqpCommand getCommand(CommandMethodId commandMethodId, byte[] commandPayload) throws UnsupportedCommandException {
+    public AmqpRequestCommand getCommand(CommandMethodId commandMethodId, byte[] commandPayload) throws UnsupportedCommandException {
         CommandFactory commandFactory = COMMAND_FACTORY_MAP.get(commandMethodId);
         if (commandFactory == null) {
             throw new UnsupportedCommandException();
@@ -27,32 +27,4 @@ public class CommandSelector {
         return commandFactory.createCommand(commandPayload);
     }
 
-    public static class CommandMethodId {
-        private int commandId, methodId;
-
-        public CommandMethodId(int commandId, int methodId) {
-            this.commandId = commandId;
-            this.methodId = methodId;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-
-            CommandMethodId that = (CommandMethodId) o;
-
-            if (commandId != that.commandId) return false;
-            if (methodId != that.methodId) return false;
-
-            return true;
-        }
-
-        @Override
-        public int hashCode() {
-            int result = commandId;
-            result = 31 * result + methodId;
-            return result;
-        }
-    }
 }
