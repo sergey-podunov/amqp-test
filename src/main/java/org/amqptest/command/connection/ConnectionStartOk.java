@@ -6,6 +6,8 @@ import org.amqptest.command.AmqpResponseCommand;
 import org.amqptest.types.LongString;
 import org.amqptest.types.ShortString;
 import org.amqptest.types.ValueReader;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 
 public class ConnectionStartOk implements AmqpRequestCommand {
 
@@ -32,5 +34,15 @@ public class ConnectionStartOk implements AmqpRequestCommand {
         mechanism = valueReader.readShortString();
         securityResponse = valueReader.readLongString();
         locale = valueReader.readShortString();
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).
+                append("clientProperties", clientProperties).
+                append("mechanism", mechanism).
+                append("securityResponse", securityResponse).
+                append("locale", locale).
+                toString();
     }
 }

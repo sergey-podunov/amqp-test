@@ -40,4 +40,13 @@ public class ShortString {
         byteBuffer.put(content.getBytes());
         return byteBuffer.array();
     }
+
+    @Override
+    public String toString() {
+        if (content == null) {
+            return "null";
+        }
+
+        return content;
+    }
 }

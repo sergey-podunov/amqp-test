@@ -17,4 +17,9 @@ public class ConnectionCloseOk implements AmqpResponseCommand {
     public byte[] bytes() {
         return new byte[0];
     }
+
+    @Override
+    public String toString() {
+        return "ConnectionCloseOk";
+    }
 }

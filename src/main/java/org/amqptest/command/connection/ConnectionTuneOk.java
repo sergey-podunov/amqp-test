@@ -5,6 +5,8 @@ import org.amqptest.command.AmqpRequestCommand;
 import org.amqptest.command.AmqpResponseCommand;
 import org.amqptest.exception.ProtocolException;
 import org.amqptest.types.ValueReader;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 
 public class ConnectionTuneOk implements AmqpRequestCommand {
     private short clientChannelMaxCount;
@@ -35,5 +37,14 @@ public class ConnectionTuneOk implements AmqpRequestCommand {
         clientChannelMaxCount = valueReader.readShort();
         clientFrameSize = valueReader.readLong();
         clientHeartbeatTimeout = valueReader.readShort();
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).
+                append("clientChannelMaxCount", clientChannelMaxCount).
+                append("clientFrameSize", clientFrameSize).
+                append("clientHeartbeatTimeout", clientHeartbeatTimeout).
+                toString();
     }
 }

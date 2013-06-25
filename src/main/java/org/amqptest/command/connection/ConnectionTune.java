@@ -2,6 +2,8 @@ package org.amqptest.command.connection;
 
 import org.amqptest.AmqpServer;
 import org.amqptest.command.AmqpResponseCommand;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 
 import java.nio.ByteBuffer;
 
@@ -33,5 +35,14 @@ public class ConnectionTune implements AmqpResponseCommand {
         payloadBuffer.putInt(frameMax);
         payloadBuffer.putShort(heartBeat);
         return payloadBuffer.array();
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).
+                append("chanelMax", chanelMax).
+                append("frameMax", frameMax).
+                append("heartBeat", heartBeat).
+                toString();
     }
 }
