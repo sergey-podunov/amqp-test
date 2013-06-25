@@ -29,7 +29,7 @@ public class ConnectionTune implements AmqpCommand {
 
     @Override
     public AmqpCommand execute(ConnectionHandler connectionHandler) {
-        throw new RuntimeException("ConnectionTune mustn't parse by server");
+        throw new RuntimeException(this.getClass().getSimpleName() + " can't be consumed by server");
     }
 
     @Override
@@ -43,6 +43,6 @@ public class ConnectionTune implements AmqpCommand {
 
     @Override
     public void fillArguments(byte[] commandPayload) {
-        throw new RuntimeException("ConnectionTune mustn't parse by server");
+        throw new RuntimeException(this.getClass().getSimpleName() + " can't be consumed by server");
     }
 }

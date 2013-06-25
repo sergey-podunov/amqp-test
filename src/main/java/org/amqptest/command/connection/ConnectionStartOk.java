@@ -2,7 +2,6 @@ package org.amqptest.command.connection;
 
 import org.amqptest.ConnectionHandler;
 import org.amqptest.command.AmqpCommand;
-import org.amqptest.exception.AmqpServerException;
 import org.amqptest.types.LongString;
 import org.amqptest.types.ShortString;
 import org.amqptest.types.ValueReader;
@@ -37,7 +36,7 @@ public class ConnectionStartOk implements AmqpCommand {
 
     @Override
     public byte[] bytes() {
-        throw new AmqpServerException("Server never generate Connection.StartOk command");
+        throw new RuntimeException(this.getClass().getSimpleName() + " can't be consumed by client");
     }
 
     @Override

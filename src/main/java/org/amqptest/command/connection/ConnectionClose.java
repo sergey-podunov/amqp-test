@@ -28,13 +28,14 @@ public class ConnectionClose implements AmqpCommand {
     @Override
     public AmqpCommand execute(ConnectionHandler connectionHandler) throws ProtocolException {
         logger.debug("Connection close with reply code {}, reply text '{}', classId {} and methodId {}",
-                replyCode, replyText.getContent(), replyClassId, replyMethodId);
+                replyCode, replyText.getContent(), replyClassId, replyMethodId);   //todo move to toString method
+        connectionHandler.setWork(false);
         return new ConnectionCloseOk();
     }
 
     @Override
     public byte[] bytes() {
-        throw new RuntimeException("ConnectionTuneOk can't be consumed by client");
+        throw new RuntimeException(this.getClass().getSimpleName() + " can't be consumed by client");
     }
 
     @Override

@@ -24,7 +24,7 @@ public class ConnectionOpenOk implements AmqpCommand {
 
     @Override
     public AmqpCommand execute(ConnectionHandler connectionHandler) throws ProtocolException {
-        throw new RuntimeException("ConnectionTuneOk can't be consumed by server");
+        throw new RuntimeException(this.getClass().getSimpleName() + " can't be consumed by server");
     }
 
     @Override
@@ -34,6 +34,6 @@ public class ConnectionOpenOk implements AmqpCommand {
 
     @Override
     public void fillArguments(byte[] commandPayload) {
-        throw new RuntimeException("ConnectionTuneOk can't be consumed by server");
+        throw new RuntimeException(this.getClass().getSimpleName() + " can't be consumed by server");
     }
 }

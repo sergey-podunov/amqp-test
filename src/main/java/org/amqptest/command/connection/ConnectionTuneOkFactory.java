@@ -1,12 +1,11 @@
 package org.amqptest.command.connection;
 
-import org.amqptest.command.CommandFactory;
+import org.amqptest.command.BaseCommandFactory;
 
-public class ConnectionTuneOkFactory implements CommandFactory<ConnectionTuneOk> {
+public class ConnectionTuneOkFactory extends BaseCommandFactory<ConnectionTuneOk> {
+
     @Override
-    public ConnectionTuneOk createCommand(byte[] commandPayload) {
-        ConnectionTuneOk connectionTuneOk = new ConnectionTuneOk();
-        connectionTuneOk.fillArguments(commandPayload);
-        return connectionTuneOk;
+    protected ConnectionTuneOk createCommand() {
+        return new ConnectionTuneOk();
     }
 }

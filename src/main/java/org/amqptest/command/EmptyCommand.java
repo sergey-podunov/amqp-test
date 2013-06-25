@@ -2,11 +2,6 @@ package org.amqptest.command;
 
 import org.amqptest.ConnectionHandler;
 
-/**
- * User: SerP
- * Date: 20.06.13
- * Time: 8:35
- */
 public class EmptyCommand implements AmqpCommand {
     @Override
     public short getCommandId() {

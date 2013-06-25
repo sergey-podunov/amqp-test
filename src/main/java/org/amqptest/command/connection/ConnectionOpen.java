@@ -27,7 +27,7 @@ public class ConnectionOpen implements AmqpCommand {
 
     @Override
     public byte[] bytes() {
-        return new byte[0];  //To change body of implemented methods use File | Settings | File Templates.
+        throw new RuntimeException(this.getClass().getSimpleName() + " can't be consumed by client");
     }
 
     @Override

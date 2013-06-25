@@ -2,7 +2,6 @@ package org.amqptest.command.connection;
 
 import org.amqptest.ConnectionHandler;
 import org.amqptest.command.AmqpCommand;
-import org.amqptest.command.EmptyCommand;
 import org.amqptest.exception.ProtocolException;
 import org.amqptest.types.ValueReader;
 
@@ -34,16 +33,14 @@ public class ConnectionTuneOk implements AmqpCommand {
             throw new ProtocolException(String.format("Client ask too big frame size : %d, server allow only %d", clientFrameSize, serverFrameSize));
         }
         connectionHandler.setFrameSize(clientFrameSize);
-
         connectionHandler.setHeartbeatTimeout(clientHeartbeatTimeout);
 
-
-        return new EmptyCommand();
+        return null;
     }
 
     @Override
     public byte[] bytes() {
-        throw new RuntimeException("ConnectionTuneOk can't be consumed by client");
+        throw new RuntimeException(this.getClass().getSimpleName() + " can't be consumed by client");
     }
 
     @Override

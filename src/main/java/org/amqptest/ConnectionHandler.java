@@ -40,6 +40,7 @@ public class ConnectionHandler implements Runnable {
     private ShortString locale;
 
     private String path;
+    private volatile boolean isWork = true;
 
     private Socket clientSocket;
 
@@ -93,6 +94,14 @@ public class ConnectionHandler implements Runnable {
         this.heartbeatTimeout = heartbeatTimeout;
     }
 
+    public boolean isWork() {
+        return isWork;
+    }
+
+    public void setWork(boolean work) {
+        isWork = work;
+    }
+
     @Override
     public void run() {
         OutputStream out = null;
@@ -103,6 +112,27 @@ public class ConnectionHandler implements Runnable {
             logger.debug("Ready to communicate with client");
 
             initConnection(in, out);
+
+            while (isWork) {
+                MethodFrame frame = (MethodFrame) Frame.readFrame(in);
+
+                MethodFrame.RawCommand rawCommand = frame.getPayload();
+                AmqpCommand requestCommand = commandSelector.getCommand(rawCommand.getCommandMethodId(), rawCommand.getCommandPayload());
+                logger.debug("Parsed request command {}", requestCommand);
+
+                AmqpCommand responseCommand = requestCommand.execute(this);
+                if (responseCommand == null) {
+                    logger.info("No response for {}", requestCommand);
+                    continue;
+                }
+
+                logger.debug("Send {}", responseCommand);
+
+                byte[] methodFramePayload = createMethodFramePayload(responseCommand);
+                out.write(Frame.createFrame(FrameType.METHOD, (short) 0, methodFramePayload));
+
+                logger.debug("{} was sent", responseCommand);
+            }
 
         } catch (Exception e) {
             logger.error("Exception: ", e);
@@ -133,44 +163,12 @@ public class ConnectionHandler implements Runnable {
         byte[] methodFramePayload;
 
         ConnectionStart connectionStart = new ConnectionStart(protocolVersion.getMajor(), protocolVersion.getMinor(), new HashMap<String, Object>(), "PLAIN", "UTF-8");
+        logger.debug("Send {}", connectionStart);
+
         methodFramePayload = createMethodFramePayload(connectionStart);
         out.write(Frame.createFrame(FrameType.METHOD, (short) 0, methodFramePayload));
 
-
-        MethodFrame frame = (MethodFrame) Frame.readFrame(in);
-
-        MethodFrame.RawCommand rawCommand = frame.getPayload();
-        AmqpCommand connectionStartOk = commandSelector.getCommand(rawCommand.getCommandMethodId(), rawCommand.getCommandPayload());
-
-        AmqpCommand connectionTune = connectionStartOk.execute(this);
-        methodFramePayload = createMethodFramePayload(connectionTune);
-        out.write(Frame.createFrame(FrameType.METHOD, (short) 0, methodFramePayload));
-
-        frame = (MethodFrame) Frame.readFrame(in);
-        rawCommand = frame.getPayload();
-        AmqpCommand connectionTuneOk = commandSelector.getCommand(rawCommand.getCommandMethodId(), rawCommand.getCommandPayload());
-
-        connectionTuneOk.execute(this); //return EmptyCommand - no need to write
-
-        frame = (MethodFrame) Frame.readFrame(in);
-        rawCommand = frame.getPayload();
-        AmqpCommand connectionOpen = commandSelector.getCommand(rawCommand.getCommandMethodId(), rawCommand.getCommandPayload());
-
-        AmqpCommand connectionOpenOk = connectionOpen.execute(this);
-        if (logger.isDebugEnabled()) {
-            logger.debug("Create answer command {}", connectionOpenOk.getClass().getSimpleName());
-        }
-        methodFramePayload = createMethodFramePayload(connectionOpenOk);
-        out.write(Frame.createFrame(FrameType.METHOD, (short) 0, methodFramePayload));
-
-        frame = (MethodFrame) Frame.readFrame(in);
-        logger.debug("got frame");
-        rawCommand = frame.getPayload();
-        AmqpCommand connectionClose = commandSelector.getCommand(rawCommand.getCommandMethodId(), rawCommand.getCommandPayload());
-
-        AmqpCommand connectionCloseOk = connectionClose.execute(this);
-        methodFramePayload = createMethodFramePayload(connectionCloseOk);
-        out.write(Frame.createFrame(FrameType.METHOD, (short) 0, methodFramePayload));
+        logger.debug("{} was sent", connectionStart);
     }
 
     private byte[] createMethodFramePayload(AmqpCommand command) {

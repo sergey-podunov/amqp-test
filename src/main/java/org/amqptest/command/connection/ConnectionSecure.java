@@ -2,7 +2,6 @@ package org.amqptest.command.connection;
 
 import org.amqptest.ConnectionHandler;
 import org.amqptest.command.AmqpCommand;
-import org.amqptest.command.EmptyCommand;
 import org.amqptest.types.LongString;
 
 public class ConnectionSecure implements AmqpCommand {
@@ -25,7 +24,7 @@ public class ConnectionSecure implements AmqpCommand {
 
     @Override
     public AmqpCommand execute(ConnectionHandler connectionHandler) {
-        return new EmptyCommand();
+        throw new RuntimeException(this.getClass().getSimpleName() + " can't be consumed by server");
     }
 
     @Override
@@ -35,6 +34,6 @@ public class ConnectionSecure implements AmqpCommand {
 
     @Override
     public void fillArguments(byte[] commandPayload) {
-        throw new RuntimeException("Command 'ConnectionSecure' can't parsed by server");
+        throw new RuntimeException(this.getClass().getSimpleName() + " can't be consumed by server");
     }
 }
