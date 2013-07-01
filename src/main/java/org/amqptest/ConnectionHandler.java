@@ -10,8 +10,9 @@ import org.amqptest.exception.UnsupportedProtocolException;
 import org.amqptest.frame.Frame;
 import org.amqptest.frame.FrameType;
 import org.amqptest.frame.MethodFrame;
-import org.amqptest.types.LongString;
-import org.amqptest.types.ShortString;
+import org.amqptest.types.FieldTable;
+import org.amqptest.types.fields.LongString;
+import org.amqptest.types.fields.ShortString;
 import org.amqptest.utils.IntUtils;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.io.IOUtils;
@@ -31,7 +32,7 @@ public class ConnectionHandler implements Runnable {
     private CommandSelector commandSelector = new CommandSelector();
 
     private ProtocolVersion protocolVersion;
-    private LongString clientProperties;
+    private FieldTable clientProperties;
 
     private Map<String, Object> serverSettings;
     private short channelCount;
@@ -59,11 +60,11 @@ public class ConnectionHandler implements Runnable {
         return locale;
     }
 
-    public void setClientProperties(LongString clientProperties) {
+    public void setClientProperties(FieldTable clientProperties) {
         this.clientProperties = clientProperties;
     }
 
-    public LongString getClientProperties() {
+    public FieldTable getClientProperties() {
         return clientProperties;
     }
 
@@ -215,7 +216,7 @@ public class ConnectionHandler implements Runnable {
             throw new UnsupportedProtocolException();
         }
 
-        logger.debug("Client ask for {} version", result);
+        logger.debug("Client ask for {} AMQP protocol version", result);
         return result;
     }
 

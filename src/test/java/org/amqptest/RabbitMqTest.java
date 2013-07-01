@@ -1,6 +1,7 @@
+package org.amqptest;
+
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
-import org.amqptest.AmqpServer;
 import org.junit.Test;
 
 public class RabbitMqTest {

@@ -1,7 +1,7 @@
 package org.amqptest.command.connection;
 
 import org.amqptest.command.AmqpResponseCommand;
-import org.amqptest.types.LongString;
+import org.amqptest.types.fields.LongString;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 

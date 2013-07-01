@@ -1,4 +1,5 @@
-import org.amqptest.AmqpServer;
+package org.amqptest;
+
 import org.junit.Test;
 
 import java.net.Socket;

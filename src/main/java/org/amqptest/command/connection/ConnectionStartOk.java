@@ -3,15 +3,16 @@ package org.amqptest.command.connection;
 import org.amqptest.ConnectionHandler;
 import org.amqptest.command.AmqpRequestCommand;
 import org.amqptest.command.AmqpResponseCommand;
-import org.amqptest.types.LongString;
-import org.amqptest.types.ShortString;
+import org.amqptest.types.FieldTable;
 import org.amqptest.types.ValueReader;
+import org.amqptest.types.fields.LongString;
+import org.amqptest.types.fields.ShortString;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
 public class ConnectionStartOk implements AmqpRequestCommand {
 
-    private LongString clientProperties;     //todo use FieldTable
+    private FieldTable clientProperties;     //todo use FieldTable
     private ShortString mechanism;
     private LongString securityResponse;
     private ShortString locale;
@@ -30,7 +31,7 @@ public class ConnectionStartOk implements AmqpRequestCommand {
     @Override
     public void fillArguments(byte[] commandPayload) {
         ValueReader valueReader = new ValueReader(commandPayload);
-        clientProperties = valueReader.readLongString();
+        clientProperties = valueReader.readFieldTable();
         mechanism = valueReader.readShortString();
         securityResponse = valueReader.readLongString();
         locale = valueReader.readShortString();

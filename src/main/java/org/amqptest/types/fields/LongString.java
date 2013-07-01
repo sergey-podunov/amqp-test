@@ -1,21 +1,31 @@
-package org.amqptest.types;
+package org.amqptest.types.fields;
 
 import org.amqptest.AmqpServer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.amqptest.types.AmqpType;
 
 import java.nio.ByteBuffer;
 
-public class LongString {
+public class LongString implements AmqpType<String> {
     private final String content;
-    private static final Logger logger = LoggerFactory.getLogger(LongString.class);
+
+    private final byte[] rawContent;
 
     public LongString(String content) {
         this.content = content;
+        this.rawContent = content.getBytes();
+    }
+
+    public LongString(byte[] rawContent) {
+        this.rawContent = rawContent;
+        this.content = new String(rawContent);
     }
 
     public String getContent() {
         return content;
+    }
+
+    public byte[] getRawContent() {
+        return rawContent;
     }
 
     public byte[] bytes() {
