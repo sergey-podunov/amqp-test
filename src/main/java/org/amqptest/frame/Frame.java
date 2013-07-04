@@ -6,6 +6,9 @@ import org.amqptest.AmqpServer;
 import org.amqptest.exception.ProtocolException;
 import org.amqptest.exception.WrongFrameSize;
 import org.amqptest.exception.WrongFrameTypeException;
+import org.apache.commons.codec.binary.Hex;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -32,8 +35,9 @@ import java.util.Map;
  */
 public abstract class Frame<P> {
     public static final byte FRAME_END = (byte) 206;
+    private static final Logger logger = LoggerFactory.getLogger(Frame.class);
 
-    protected short chanel;
+    protected short channel;
     protected byte[] payload;
 
     private static Map<FrameType, FrameFactory> factories = ImmutableMap.<FrameType, FrameFactory>builder()
@@ -43,18 +47,19 @@ public abstract class Frame<P> {
             .put(FrameType.HEARTBEAT, new HeartbeatFrameFactory())
             .build();
 
-    protected Frame(short chanel, byte[] payload) {
-        this.chanel = chanel;
+    protected Frame(short channel, byte[] payload) {
+        this.channel = channel;
         this.payload = payload;
     }
 
-    public short getChanel() {
-        return chanel;
+    public short getChannel() {
+        return channel;
     }
 
     public abstract P getPayload();
 
     public static byte[] createFrame(FrameType type, short chanel, byte[] payload) {
+        logger.trace("Create frame with {} type for channel {}, payload {}", type.name(), chanel, Hex.encodeHexString(payload));
         int payloadSize = payload.length;
         ByteBuffer frameBuffer = ByteBuffer.allocate(8 + payloadSize);
         frameBuffer.put(type.getCode());
@@ -77,8 +82,8 @@ public abstract class Frame<P> {
             if (type == null) {
                 throw new WrongFrameTypeException();
             }
-
             short chanel = in.readShort();
+            logger.trace("Got frame with {} frame type for {} channel", type.name(), chanel);
 
             int payloadSize = in.readInt();
             byte[] payload = new byte[payloadSize];

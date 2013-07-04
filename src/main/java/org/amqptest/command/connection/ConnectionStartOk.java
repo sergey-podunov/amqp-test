@@ -3,6 +3,7 @@ package org.amqptest.command.connection;
 import org.amqptest.ConnectionHandler;
 import org.amqptest.command.AmqpRequestCommand;
 import org.amqptest.command.AmqpResponseCommand;
+import org.amqptest.command.BaseAmqpCommand;
 import org.amqptest.types.FieldTable;
 import org.amqptest.types.ValueReader;
 import org.amqptest.types.fields.LongString;
@@ -10,12 +11,16 @@ import org.amqptest.types.fields.ShortString;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
-public class ConnectionStartOk implements AmqpRequestCommand {
+public class ConnectionStartOk extends BaseAmqpCommand implements AmqpRequestCommand {
 
     private FieldTable clientProperties;     //todo use FieldTable
     private ShortString mechanism;
     private LongString securityResponse;
     private ShortString locale;
+
+    protected ConnectionStartOk(short channel) {
+        super(channel);
+    }
 
     @Override
     public AmqpResponseCommand execute(ConnectionHandler connectionHandler) {
@@ -25,7 +30,8 @@ public class ConnectionStartOk implements AmqpRequestCommand {
 
         return new ConnectionTune((Short) connectionHandler.getServerSettings().get("chanelMaxCount"),
                 (Integer) connectionHandler.getServerSettings().get("frameMaxSize"),
-                (Short) connectionHandler.getServerSettings().get("heartbeatTimeout"));
+                (Short) connectionHandler.getServerSettings().get("heartbeatTimeout"),
+                (short) 0);
     }
 
     @Override

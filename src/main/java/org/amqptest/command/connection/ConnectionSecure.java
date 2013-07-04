@@ -1,15 +1,17 @@
 package org.amqptest.command.connection;
 
 import org.amqptest.command.AmqpResponseCommand;
+import org.amqptest.command.BaseAmqpCommand;
 import org.amqptest.types.fields.LongString;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
-public class ConnectionSecure implements AmqpResponseCommand {
+public class ConnectionSecure extends BaseAmqpCommand implements AmqpResponseCommand {
 
     private final LongString securityData;
 
-    public ConnectionSecure(LongString securityData) {
+    public ConnectionSecure(LongString securityData, short channel) {
+        super(channel);
         this.securityData = securityData;
     }
 

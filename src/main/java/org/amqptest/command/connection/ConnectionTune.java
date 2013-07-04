@@ -2,17 +2,19 @@ package org.amqptest.command.connection;
 
 import org.amqptest.AmqpServer;
 import org.amqptest.command.AmqpResponseCommand;
+import org.amqptest.command.BaseAmqpCommand;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
 import java.nio.ByteBuffer;
 
-public class ConnectionTune implements AmqpResponseCommand {
+public class ConnectionTune extends BaseAmqpCommand implements AmqpResponseCommand {
     private final short chanelMax;
     private final int frameMax;
     private final short heartBeat;
 
-    public ConnectionTune(short chanelMax, int frameMax, short heartBeat) {
+    public ConnectionTune(short chanelMax, int frameMax, short heartBeat, short channel) {
+        super(channel);
         this.chanelMax = chanelMax;
         this.frameMax = frameMax;
         this.heartBeat = heartBeat;

@@ -3,26 +3,26 @@ package org.amqptest.command.connection;
 import org.amqptest.ConnectionHandler;
 import org.amqptest.command.AmqpRequestCommand;
 import org.amqptest.command.AmqpResponseCommand;
+import org.amqptest.command.BaseAmqpCommand;
 import org.amqptest.exception.ProtocolException;
 import org.amqptest.types.ValueReader;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class ConnectionClose implements AmqpRequestCommand {
-    private static final Logger logger = LoggerFactory.getLogger(ConnectionClose.class);
+public class ConnectionClose extends BaseAmqpCommand implements AmqpRequestCommand {
     private Short replyCode;
     private String replyText;
     private Short replyClassId;
     private Short replyMethodId;
 
+    protected ConnectionClose(short channel) {
+        super(channel);
+    }
+
     @Override
     public AmqpResponseCommand execute(ConnectionHandler connectionHandler) throws ProtocolException {
-        logger.debug("Connection close with reply code {}, reply text '{}', classId {} and methodId {}",
-                replyCode, replyText, replyClassId, replyMethodId);   //todo move to toString method
         connectionHandler.setWork(false);
-        return new ConnectionCloseOk();
+        return new ConnectionCloseOk((short) 0);
     }
 
     @Override

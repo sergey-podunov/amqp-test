@@ -25,7 +25,9 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class ConnectionHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(ConnectionHandler.class);
@@ -40,6 +42,7 @@ public class ConnectionHandler implements Runnable {
 
     private short heartbeatTimeout;
     private ShortString locale;
+    private Set<Short> channels = new HashSet<Short>();
 
     private String path;
     private volatile boolean isWork = true;
@@ -104,6 +107,10 @@ public class ConnectionHandler implements Runnable {
         isWork = work;
     }
 
+    public void setPath(String path) {
+        this.path = path;
+    }
+
     @Override
     public void run() {
         OutputStream out = null;
@@ -119,7 +126,7 @@ public class ConnectionHandler implements Runnable {
                 MethodFrame frame = (MethodFrame) Frame.readFrame(in);
 
                 MethodFrame.RawCommand rawCommand = frame.getPayload();
-                AmqpRequestCommand requestCommand = commandSelector.getCommand(rawCommand.getCommandMethodId(), rawCommand.getCommandPayload());
+                AmqpRequestCommand requestCommand = commandSelector.getCommand(rawCommand.getCommandMethodId(), frame);
                 logger.debug("Parsed request command {}", requestCommand);
 
                 AmqpResponseCommand responseCommand = requestCommand.execute(this);
@@ -131,7 +138,7 @@ public class ConnectionHandler implements Runnable {
                 logger.debug("Send {}", responseCommand);
 
                 byte[] methodFramePayload = createMethodFramePayload(responseCommand);
-                out.write(Frame.createFrame(FrameType.METHOD, (short) 0, methodFramePayload));
+                out.write(Frame.createFrame(FrameType.METHOD, responseCommand.getChannel(), methodFramePayload));
 
                 logger.debug("{} was sent", responseCommand);
             }
@@ -164,7 +171,8 @@ public class ConnectionHandler implements Runnable {
 
         byte[] methodFramePayload;
 
-        ConnectionStart connectionStart = new ConnectionStart(protocolVersion.getMajor(), protocolVersion.getMinor(), new HashMap<String, Object>(), "PLAIN", "UTF-8");
+        ConnectionStart connectionStart = new ConnectionStart(protocolVersion.getMajor(), protocolVersion.getMinor(),
+                new HashMap<String, Object>(), "PLAIN", "UTF-8", (short) 0);
         logger.debug("Send {}", connectionStart);
 
         methodFramePayload = createMethodFramePayload(connectionStart);
@@ -220,11 +228,15 @@ public class ConnectionHandler implements Runnable {
         return result;
     }
 
-    public boolean handleSecurityResponse(ShortString mechanism, LongString securityResponse) {
-        return true;
+    public void createChannel(short channel) {
+        channels.add(channel);
     }
 
-    public void setPath(String path) {
-        this.path = path;
+    public void closeChannel(short channel) {
+        channels.remove(channel);
+    }
+
+    public boolean handleSecurityResponse(ShortString mechanism, LongString securityResponse) {
+        return true;
     }
 }

@@ -1,14 +1,16 @@
 package org.amqptest.command.connection;
 
 import org.amqptest.command.AmqpResponseCommand;
+import org.amqptest.command.BaseAmqpCommand;
 import org.amqptest.types.fields.ShortString;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
-public class ConnectionOpenOk implements AmqpResponseCommand {
+public class ConnectionOpenOk extends BaseAmqpCommand implements AmqpResponseCommand {
     private final String knownHosts;
 
-    public ConnectionOpenOk(String knownHosts) {
+    public ConnectionOpenOk(String knownHosts, short channel) {
+        super(channel);
         this.knownHosts = knownHosts;
     }
 

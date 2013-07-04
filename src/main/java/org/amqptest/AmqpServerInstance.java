@@ -84,11 +84,11 @@ class AmqpServerInstance implements Runnable {
         isInterrupted = true;
         executorService.shutdownNow();
         try {
-            serverSocket.close();
+            if (serverSocket != null) {
+                serverSocket.close();
+            }
         } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            logger.error("Got exception: ", e);
         }
-
-//        Thread.currentThread().interrupt();
     }
 }

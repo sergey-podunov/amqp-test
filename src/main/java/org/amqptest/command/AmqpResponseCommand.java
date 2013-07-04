@@ -6,4 +6,6 @@ public interface AmqpResponseCommand {
     short getMethodId();
 
     byte[] bytes();
+
+    short getChannel();
 }

@@ -1,6 +1,7 @@
 package org.amqptest.command.connection;
 
 import org.amqptest.command.AmqpResponseCommand;
+import org.amqptest.command.BaseAmqpCommand;
 import org.amqptest.types.fields.LongString;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
@@ -8,7 +9,7 @@ import org.apache.commons.lang.builder.ToStringStyle;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 
-public class ConnectionStart implements AmqpResponseCommand {
+public class ConnectionStart extends BaseAmqpCommand implements AmqpResponseCommand {
 
     private final int major;
     private final int minor;
@@ -16,7 +17,8 @@ public class ConnectionStart implements AmqpResponseCommand {
     private final String securityMechanisms;
     private final String locales;
 
-    public ConnectionStart(int major, int minor, HashMap<String, Object> serverProperties, String securityMechanisms, String locales) {
+    public ConnectionStart(int major, int minor, HashMap<String, Object> serverProperties, String securityMechanisms, String locales, short channel) {
+        super(channel);
         this.major = major;
         this.minor = minor;
         this.serverProperties = serverProperties;

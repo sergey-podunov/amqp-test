@@ -1,21 +1,22 @@
-package org.amqptest.command.connection;
+package org.amqptest.command.channel;
 
 import org.amqptest.command.AmqpResponseCommand;
 import org.amqptest.command.BaseAmqpCommand;
 
-public class ConnectionCloseOk extends BaseAmqpCommand implements AmqpResponseCommand {
-    protected ConnectionCloseOk(short channel) {
+public class ChannelCloseOk extends BaseAmqpCommand implements AmqpResponseCommand {
+
+    protected ChannelCloseOk(short channel) {
         super(channel);
     }
 
     @Override
     public short getCommandId() {
-        return 10;
+        return 20;
     }
 
     @Override
     public short getMethodId() {
-        return 51;
+        return 41;
     }
 
     @Override
@@ -25,6 +26,6 @@ public class ConnectionCloseOk extends BaseAmqpCommand implements AmqpResponseCo
 
     @Override
     public String toString() {
-        return "ConnectionCloseOk";
+        return "ChannelCloseOk";
     }
 }

@@ -1,5 +1,7 @@
 package org.amqptest.command;
 
+import org.amqptest.frame.MethodFrame;
+
 public interface CommandFactory<C extends AmqpRequestCommand> {
-    C createCommand(byte[] commandPayload);
+    C createCommand(MethodFrame frame);
 }
