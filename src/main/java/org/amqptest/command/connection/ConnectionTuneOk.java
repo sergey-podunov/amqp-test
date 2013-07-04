@@ -1,0 +1,55 @@
+package org.amqptest.command.connection;
+
+import org.amqptest.ConnectionHandler;
+import org.amqptest.command.AmqpRequestCommand;
+import org.amqptest.command.AmqpResponseCommand;
+import org.amqptest.command.BaseAmqpCommand;
+import org.amqptest.exception.ProtocolException;
+import org.amqptest.types.ValueReader;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
+
+public class ConnectionTuneOk extends BaseAmqpCommand implements AmqpRequestCommand {
+    private short clientChannelMaxCount;
+    private int clientFrameSize;
+    private short clientHeartbeatTimeout;
+
+    protected ConnectionTuneOk(short channel) {
+        super(channel);
+    }
+
+    @Override
+    public AmqpResponseCommand execute(ConnectionHandler connectionHandler) throws ProtocolException {
+        Short serverChanelMaxCount = (Short) connectionHandler.getServerSettings().get("chanelMaxCount");
+        if (clientChannelMaxCount > serverChanelMaxCount) {
+            throw new ProtocolException(String.format("Client ask too much channels : %d, server allow only %d", clientChannelMaxCount, serverChanelMaxCount));
+        }
+        connectionHandler.setChannelCount(clientChannelMaxCount);
+
+        Integer serverFrameSize = (Integer) connectionHandler.getServerSettings().get("frameMaxSize");
+        if (clientChannelMaxCount > serverFrameSize) {
+            throw new ProtocolException(String.format("Client ask too big frame size : %d, server allow only %d", clientFrameSize, serverFrameSize));
+        }
+        connectionHandler.setFrameSize(clientFrameSize);
+        connectionHandler.setHeartbeatTimeout(clientHeartbeatTimeout);
+
+        return null;
+    }
+
+    @Override
+    public void fillArguments(byte[] commandPayload) {
+        ValueReader valueReader = new ValueReader(commandPayload);
+        clientChannelMaxCount = valueReader.readShort();
+        clientFrameSize = valueReader.readLong();
+        clientHeartbeatTimeout = valueReader.readShort();
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).
+                append("clientChannelMaxCount", clientChannelMaxCount).
+                append("clientFrameSize", clientFrameSize).
+                append("clientHeartbeatTimeout", clientHeartbeatTimeout).
+                toString();
+    }
+}
